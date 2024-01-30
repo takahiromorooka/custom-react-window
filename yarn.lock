@@ -761,6 +761,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"custom-react-window@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "custom-react-window@workspace:."
+  dependencies:
+    "@babel/core": 7.18.10
+    "@emotion/babel-plugin": 11.9.5
+    "@emotion/react": 11.9.3
+    "@emotion/styled": 11.9.3
+    "@types/node": 18.6.2
+    "@types/react": 18.0.15
+    "@types/react-dom": 18.0.6
+    next: 12.2.3
+    react: 18.2.0
+    react-dom: 18.2.0
+    typescript: 4.7.4
+  languageName: unknown
+  linkType: soft
+
 "debug@npm:^4.1.0, debug@npm:^4.3.1":
   version: 4.3.4
   resolution: "debug@npm:4.3.4"
@@ -1081,24 +1099,6 @@ __metadata:
   checksum: a2e8092dd86c8396bdba9f2b5481032848525b3dc295ce9b57896f931e63fc16f79805144321f72976383fc249584672a75cc18d6777c6b757603f372f745981
   languageName: node
   linkType: hard
-
-"playground-next@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "playground-next@workspace:."
-  dependencies:
-    "@babel/core": 7.18.10
-    "@emotion/babel-plugin": 11.9.5
-    "@emotion/react": 11.9.3
-    "@emotion/styled": 11.9.3
-    "@types/node": 18.6.2
-    "@types/react": 18.0.15
-    "@types/react-dom": 18.0.6
-    next: 12.2.3
-    react: 18.2.0
-    react-dom: 18.2.0
-    typescript: 4.7.4
-  languageName: unknown
-  linkType: soft
 
 "postcss@npm:8.4.14":
   version: 8.4.14
