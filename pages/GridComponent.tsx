@@ -1,15 +1,33 @@
-import React, { useState } from "react";
+import React, { useState, memo, useMemo } from "react";
+
+function arePropsEqual(oldProps: { style: { gridColumn: string } }, newProps: { style: { gridColumn: string } }) {
+  return oldProps.style['gridColumn'] === newProps.style['gridColumn']
+}
+
+const HeaderRowComponent = memo(function HeaderRowComponent({ index, style, item }: { index: number, style: { gridColumn: string }, item: { name: string } }) {
+  console.log(item)
+  return (
+    <div
+      className={"item-cell"}
+      style={style}
+    >
+      <div>
+        Hedear top {item.name}
+      </div>
+    </div>
+  )
+}, arePropsEqual)
 
 const GridComponent = () => {
   const items = [...Array(100)].map((_, i) => { return { name: `Item ${i}` } })
   const itemCount = items.length
   const itemSize = 200
 
-  const [indices, setIndex] = useState({ startIndex: 0, stopIndex: 12 })
+  const [indices, setIndex] = useState({ startIndex: 0, stopIndex: 6 })
 
   const getStartIndexForOffset = (
-    { itemCount, itemSize },
-    offset
+    { itemCount, itemSize }: { itemCount: number, itemSize: number },
+    offset: number
   ) =>{
     //何個要素を通り過ぎたのか
     return Math.max(
@@ -19,9 +37,9 @@ const GridComponent = () => {
   }
   
   const getStopIndexForStartIndex = (
-    { itemCount, itemSize, width },
-    startIndex,
-    scrollOffset,
+    { itemCount, itemSize, width }: { itemCount: number, itemSize: number, width: number },
+    startIndex: number,
+    scrollOffset: number,
   ) => {
     //通り過ぎた要素の数×要素のサイズ
     const offset = startIndex * itemSize;
@@ -40,12 +58,26 @@ const GridComponent = () => {
     );
   }
 
-  const handleScroll = (event) => {
-    const width = event.target.clientWidth
-    const startIndex = getStartIndexForOffset({ itemCount: items.length, itemSize: itemSize }, event.target.scrollLeft)
-    const stopIndex = getStopIndexForStartIndex({ itemCount: items.length, itemSize: itemSize, width: width }, startIndex, event.target.scrollLeft)
-    setIndex({ startIndex: startIndex, stopIndex: stopIndex + 2 })
+  const handleScroll = (event: React.SyntheticEvent<HTMLDivElement>) => {
+    const target = event.target as HTMLDivElement
+    const width = target.clientWidth
+    const startIndex = getStartIndexForOffset({ itemCount: items.length, itemSize: itemSize }, target.scrollLeft)
+    const stopIndex = getStopIndexForStartIndex({ itemCount: items.length, itemSize: itemSize, width: width }, startIndex, target.scrollLeft)
+    setIndex({ startIndex: startIndex, stopIndex: stopIndex })
   };
+
+  const virtualItems = useMemo(() => {
+    const ary = [];
+    if (itemCount > 0) {
+      for (let index = indices.startIndex; index <= indices.stopIndex; index++) {
+        ary.push(
+          { ...items[index], style: { gridColumn: `${index + 2} / ${index + 3}` } }
+        );
+      }
+    }
+    return ary
+  }, [indices])
+
 
   return (
     <div
@@ -75,18 +107,13 @@ const GridComponent = () => {
           >
             
           </div>
-          {items.slice(indices.startIndex, indices.stopIndex).map((item, index) => (
-            <div
-              key={index}
-              style={{
-                gridColumn: `${indices.startIndex + index + 2} / ${indices.startIndex + index + 3}`,
-                backgroundColor: "#fbfbfb",
-              }}
-            >
-              <div>
-                Hedear top {item.name}
-              </div>
-            </div>
+          {virtualItems.map((item, index) => (
+            <HeaderRowComponent
+              key={item.style['gridColumn']}
+              index={index}
+              style={item.style}
+              item={item}
+            />
           ))}
         </div>
         <div
@@ -107,14 +134,18 @@ const GridComponent = () => {
           >
             
           </div>
-          {items.slice(indices.startIndex, indices.stopIndex).map((item, index) => (
+          {virtualItems.map((item, index) => (
             <div
               key={index}
               style={{
                 gridColumn: `${indices.startIndex + index + 2} / ${indices.startIndex + index + 3}`,
                 backgroundColor: "#fbfbfb",
               }}
-            >Hedear Bottom{item.name}</div>
+            >
+              <div>
+                Hedear top {item.name}
+              </div>
+            </div>
           ))}
         </div>
       </div>
@@ -137,7 +168,7 @@ const GridComponent = () => {
           >
             Item
           </div>
-          {items.slice(indices.startIndex, indices.stopIndex).map((item, index) => (
+          {virtualItems.map((item, index) => (
             <div
               key={index}
               style={{
@@ -166,7 +197,7 @@ const GridComponent = () => {
           >
             Item
           </div>
-          {items.slice(indices.startIndex, indices.stopIndex).map((item, index) => (
+          {virtualItems.map((item, index) => (
             <div
               key={index}
               style={{
@@ -196,7 +227,7 @@ const GridComponent = () => {
             >
               Item
             </div>
-            {items.slice(indices.startIndex, indices.stopIndex).map((item, index) => (
+            {virtualItems.map((item, index) => (
               <div
                 key={index}
                 style={{
